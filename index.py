@@ -15,7 +15,6 @@ app = Flask(__name__)
 
 @app.errorhandler(CustomHTTPException)
 def on_custom_http_exception(e: CustomHTTPException):
-    g.values['code'] = e.code
     return {
         'code': e.code,
         'message': e.message

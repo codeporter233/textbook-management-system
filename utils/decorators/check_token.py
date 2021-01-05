@@ -6,9 +6,9 @@ from utils import jwt_utils
 from utils.exceptions import custom_abort
 
 
-def check_token(func):
+def jwt(func):
     """
-    检查token，过期时间小于一小时则更新token
+    检查token, 并刷新token
     :param func: 被装饰函数
     :return:
     """
