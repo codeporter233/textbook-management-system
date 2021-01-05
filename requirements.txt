@@ -1,0 +1,4 @@
+PyMySQL
+flask
+gevent
+PyJWT

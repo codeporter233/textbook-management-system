@@ -5,7 +5,7 @@ import jwt
 jwt_secret = "bu8X4q51fi7KnDSRWk3OjCx46Dqb1RBL"
 
 
-def generate_jwt(payload: dict, expiry: datetime = datetime.utcnow() + timedelta(days=0, seconds=60*60*24)):
+def generate_jwt(payload: dict, expiry: datetime = datetime.utcnow() + timedelta(days=0, seconds=60 * 10)):
     """
     生成jwt
     :param payload: dict 载荷

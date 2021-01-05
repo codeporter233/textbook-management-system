@@ -3,11 +3,23 @@ from os import path
 from flask import Flask
 from gevent.pywsgi import WSGIServer
 import gevent.monkey
+
+from utils.exceptions import CustomHTTPException
+
 gevent.monkey.patch_all()
 
 from utils import load_plugin
 
 app = Flask(__name__)
+
+
+@app.errorhandler(CustomHTTPException)
+def on_custom_http_exception(e: CustomHTTPException):
+    g.values['code'] = e.code
+    return {
+        'code': e.code,
+        'message': e.message
+    }
 
 
 def initializer():
