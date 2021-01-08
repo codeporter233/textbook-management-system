@@ -17,10 +17,7 @@ def handle_login():
     sql_admin = "select * from admin"
     cursor.execute(sql_admin)
     admins = cursor.fetchall()
-    print(user_id)
-    print(pwd_md5)
     for admin in admins:
-        print(admin)
         if user_id == admin[0] and pwd_md5 == admin[2]:
             flag = 1
             break
@@ -28,7 +25,6 @@ def handle_login():
     cursor.execute(sql_teacher)
     teachers = cursor.fetchall()
     for teacher in teachers:
-        print(teacher)
         if user_id == teacher[0] and pwd_md5 == teacher[4]:
             flag = 2
             break
@@ -60,7 +56,6 @@ def handle_add_teacher():
     # pwd_md5为加密后的密码,数据库存放的是加密后的密码
     pwd_md5 = hashlib.md5(password.encode()).hexdigest()
     if sex != "男" and sex != "女":
-        print(sex)
         # 如果性别不为男或女,则抛出异常,在index.py里有处理异常,这个你们不用管
         custom_abort(-3, "性别必须为男或女")
     # 一句sql语句
@@ -74,7 +69,38 @@ def handle_add_teacher():
     }
 
 
+@api.route("delete_teacher", methods=["GET"])
+def handle_delete_teacher():
+    teacher_id = request.args.get("teacher_id")
+    sql = "delete from teacher where teacher_id='{}'".format(teacher_id)
+    cursor.execute(sql)
+    db.commit()
+    return {
+        "code": 0
+    }
 
 
-
-
+@api.route("update_teacher", methods=["GET"])
+def handle_update_teacher():
+    teacher_id = request.args.get("teacher_id")
+    name = request.args.get("name")
+    sex = request.args.get("sex")
+    telephone = request.args.get("telephone")
+    password = request.args.get("password")
+    sql = "update teacher set"
+    if name is not None:
+        sql += " name='{}',".format(name)
+    if sex is not None:
+        sql += " sex='{}',".format(sex)
+    if telephone is not None:
+        sql += " telephone='{}',".format(telephone)
+    if password is not None:
+        pwd_md5 = hashlib.md5(password.encode()).hexdigest()
+        sql += " password_md5='{}',".format(pwd_md5)
+    sql = sql[:-1]
+    sql += " where teacher_id='{}'".format(teacher_id)
+    cursor.execute(sql)
+    db.commit()
+    return {
+        "code": 0
+    }
