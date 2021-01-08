@@ -4,3 +4,4 @@
 private_settings.py
 api/user/tacher_class/__init__.py
 api/user/tacher_class/teacher.py
+test*

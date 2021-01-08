@@ -1,6 +1,6 @@
 from flask import request
 
-from mysql_connect import cursor
+from mysql_connect import cursor, db
 from . import api
 import datetime
 
@@ -22,6 +22,7 @@ def record_attribution():
     sql = "update attribution_subscribe set attribute_time='{}',attribute_count='{}',receiver_name='{}' where class_id='{}' and book_id='{}'".format(
         time_str, count, monitor, class_id, book_id)
     cursor.execute(sql)
+    db.commit()
     return {
         "code": 0
     }
@@ -52,6 +53,7 @@ def attribution_query():
     if receiver is not None:
         sql += "and receiver_name like '%" + receiver + "%'"
     cursor.execute(sql)
+    db.commit()
     query_results = cursor.fetchall()
     data = []
     for res in query_results:

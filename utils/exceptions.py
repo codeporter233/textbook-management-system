@@ -7,7 +7,7 @@ class CustomHTTPException(Exception):
 _code_message = {
     -1: "token失效",
     -2: "账户名或密码错误",
-    -3: "登录失败",
+    -3: "参数错误",
     -4: "暂停服务",
     -5: "访问过快",
     -6: "查询失败",

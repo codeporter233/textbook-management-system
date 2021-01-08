@@ -14,7 +14,7 @@ def jwt(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        token = request.headers.get('token')
+        token = request.args.get('token')
         if token:
             payload = jwt_utils.verify_jwt(token)
             exp = payload['exp']
