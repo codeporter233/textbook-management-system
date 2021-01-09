@@ -30,28 +30,9 @@ def record_attribution():
 
 @api.route("/attribution_query", methods=["GET"])
 def attribution_query():
-    sql = "select * from attribution_subscribe where 1=1 "
-    class_id = request.args.get("class_id")
-    book_id = request.args.get("book_id")
-    attribute_time = request.args.get("attribute_time")
-    subscribe_time = request.args.get("subscribe_time")
-    course_id = request.args.get("course_id")
-    teacher_id = request.args.get("teacher_id")
-    receiver = request.args.get("receiver")
-    if class_id is not None:
-        sql += "and class_id like '%" + class_id + "%'"
-    if book_id is not None:
-        sql += "and book_id like '%" + book_id + "%'"
-    if teacher_id is not None:
-        sql += "and teacher_id like '%" + teacher_id + "%'"
-    if course_id is not None:
-        sql += "and course_id like '%" + course_id + "%'"
-    if attribute_time is not None:
-        sql += "and attribute_time like '%" + attribute_time + "%'"
-    if subscribe_time is not None:
-        sql += "and subscribe_time like '%" + subscribe_time + "%'"
-    if receiver is not None:
-        sql += "and receiver_name like '%" + receiver + "%'"
+    sql = "select * from attribution_subscribe where 1=1"
+    for key, value in dict(request.args).items():
+        sql += " and {} like '%{}%'".format(key, value)
     cursor.execute(sql)
     db.commit()
     query_results = cursor.fetchall()

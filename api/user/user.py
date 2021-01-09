@@ -1,10 +1,13 @@
-from utils.decorators.jwt import jwt
+import hashlib
+from datetime import datetime, timedelta
+
+from flask import request
+
+from mysql_connect import cursor, db
+from utils.decorators.jwt import token_required
 from utils.exceptions import custom_abort
 from utils.jwt_utils import generate_jwt
 from . import api
-from flask import request
-from mysql_connect import cursor, db
-import hashlib
 
 
 @api.route("/login", methods=["GET"])
@@ -31,7 +34,7 @@ def handle_login():
     if flag == 1:
         return {
             "code": 0,
-            "token": generate_jwt({"user_id": user_id}),
+            "token": generate_jwt({"user_id": user_id}, datetime.utcnow() + timedelta(days=0, seconds=60 * 10)),
             "authority": "admin"
         }
     elif flag == 2:
@@ -45,7 +48,7 @@ def handle_login():
 
 
 @api.route("/add_teacher", methods=["GET"])
-# @jwt
+@token_required
 def handle_add_teacher():
     # 获取教师的五个参数
     teacher_id = request.args.get("teacher_id")
@@ -59,7 +62,8 @@ def handle_add_teacher():
         # 如果性别不为男或女,则抛出异常,在index.py里有处理异常,这个你们不用管
         custom_abort(-3, "性别必须为男或女")
     # 一句sql语句
-    sql = "INSERT INTO `textbook_system`.`teacher`(`teacher_id`, `name`, `sex`, `telephone`, `password_md5`) VALUES ('{}', '{}', '{}', '{}', '{}')".format(teacher_id, name, sex, telephone, pwd_md5)
+    sql = "INSERT INTO `textbook_system`.`teacher`(`teacher_id`, `name`, `sex`, `telephone`, `password_md5`) VALUES ('{}', '{}', '{}', '{}', '{}')".format(
+        teacher_id, name, sex, telephone, pwd_md5)
     # 执行sql语句，cursor为从mysql_connect导入的
     cursor.execute(sql)
     db.commit()
@@ -70,6 +74,7 @@ def handle_add_teacher():
 
 
 @api.route("delete_teacher", methods=["GET"])
+@token_required
 def handle_delete_teacher():
     teacher_id = request.args.get("teacher_id")
     sql = "delete from teacher where teacher_id='{}'".format(teacher_id)
@@ -81,22 +86,17 @@ def handle_delete_teacher():
 
 
 @api.route("update_teacher", methods=["GET"])
+@token_required
 def handle_update_teacher():
     teacher_id = request.args.get("teacher_id")
-    name = request.args.get("name")
-    sex = request.args.get("sex")
-    telephone = request.args.get("telephone")
-    password = request.args.get("password")
     sql = "update teacher set"
-    if name is not None:
-        sql += " name='{}',".format(name)
-    if sex is not None:
-        sql += " sex='{}',".format(sex)
-    if telephone is not None:
-        sql += " telephone='{}',".format(telephone)
-    if password is not None:
-        pwd_md5 = hashlib.md5(password.encode()).hexdigest()
-        sql += " password_md5='{}',".format(pwd_md5)
+    for key, value in dict(request.args).items():
+        if key == "teacher_id":
+            continue
+        if key == 'password':
+            sql += " password_md5='{}',".format(hashlib.md5(value.encode()).hexdigest())
+            continue
+        sql += " {}='{}',".format(key, value)
     sql = sql[:-1]
     sql += " where teacher_id='{}'".format(teacher_id)
     cursor.execute(sql)
