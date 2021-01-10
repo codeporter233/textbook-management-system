@@ -1,17 +1,14 @@
-import hashlib
 from datetime import datetime, timedelta
 
 from flask import request
 
 from mysql_connect import cursor, db
-from utils.decorators.jwt import token_required
-from utils.exceptions import custom_abort
-from utils.jwt_utils import generate_jwt
+
 from . import api
 
 
-@api.route("/insert_T", methods=["GET"])
-def handle_insert_T():
+@api.route("/insert_Textbook", methods=["GET"])
+def handle_insert_Textbook():
     book_id = request.args.get("book_id")
     book_name = request.args.get("subscribe_count")
     author = request.args.get("subscribe_time")
@@ -28,8 +25,8 @@ def handle_insert_T():
     }
 
 
-@api.route("/insert_as", methods=["GET"])
-def handle_insert_T():
+@api.route("/insert_attribution_subscribe", methods=["GET"])
+def handle_insert_attribution_subscribe():
     book_id = request.args.get("book_id")
     class_id = request.args.get("class_id")
     teacher_id = request.args.get("teacher_id")
@@ -56,13 +53,13 @@ def handle_select():
     teacher_id = request.args.get("teacher_id")
     subscribe_time = request.args.get("subscribe_time")
     if book_id is not None:
-        sql += "and book_id like '%" + book_id + "%'"
+        sql += "and book_id like '%{}%'".format(book_id)
     if class_id is not None:
-        sql += "and class_id like '%" + class_id + "%'"
+        sql += "and class_id like '%{}%'".format(class_id)
     if teacher_id is not None:
-        sql += "and teacher_id like '%" + teacher_id + "%'"
+        sql += "and teacher_id like '%{}%'".format(teacher_id)
     if subscribe_time is not None:
-        sql += "and subscribe_time like '%" + subscribe_time + "%'"
+        sql += "and subscribe_time like '%{}%'".format(subscribe_time)
     cursor.execute(sql)
     select_list = cursor.fetchall()
     data = []
@@ -77,8 +74,8 @@ def handle_select():
     }
 
 
-@api.route("/update_T", methods=["GET"])
-def handle_update_T():
+@api.route("/update_Textbook", methods=["GET"])
+def handle_update_Textbook():
     book_id = request.args.get("book_id")
     book_name = request.args.get("book_name")
     author = request.args.get("author")
@@ -92,8 +89,8 @@ def handle_update_T():
     }
 
 
-@api.route("/update_as", methods=["GET"])
-def handle_update_as():
+@api.route("/update_attribution_subscribe", methods=["GET"])
+def handle_update_attribution_subscribe():
     book_id = request.args.get("book_id")
     class_id = request.args.get("class_id")
     teacher_id = request.args.get("teacher_id")
@@ -114,8 +111,8 @@ def handle_update_as():
     }
 
 
-@api.route("/delete_T", methods=["GET"])
-def handle_delete_T():
+@api.route("/delete_Textbook", methods=["GET"])
+def handle_delete_Textbook():
     book_id = request.args.get("book_id")
     sql = "delete from textbook where book_id='{}'".format(book_id)
     cursor.execute(sql)
@@ -125,29 +122,5 @@ def handle_delete_T():
     }
 
 
-@api.route("/delete_as", methods=["GET"])
-def handle_delete_as():
-    sql = "delete from attribution_subscribe where 1=1 "
-    book_id = request.args.get("book_id")
-    class_id = request.args.get("class_id")
-    teacher_id = request.args.get("teacher_id")
-    if book_id is not None:
-        sql = "and book_id='%"+book_id+"%'"
-    if class_id is not None:
-        sql = "and class_id='%"+class_id+"%'"
-    if teacher_id is not None:
-        sql = "and teacher_id='%"+teacher_id+"%'"
-    cursor.execute(sql)
-    print(sql)
-    delete_list = cursor.fetchall()
-    data = []
-    for res in delete_list:
-        temp = list(res)
-        temp[6] = str(temp[6])
-        temp[7] = str(temp[7])
-        data.append(temp)
-    return {
-        "code": 0,
-        "data": delete_list
-    }
+
 
