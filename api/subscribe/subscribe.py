@@ -83,7 +83,7 @@ def handle_delete_attribution_subscribe():
     book_id = request.args.get("book_id")
     class_id = request.args.get("class_id")
     sql_select = "select attribute_time from attribution_subscribe where book_id = '{}' and class_id = '{}' ".format(
-        book_id, class_id)
+        book_id, class_id, )
     cursor.execute(sql_select)
     select_list = cursor.fetchall()
     # 循环多行
