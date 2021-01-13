@@ -40,7 +40,7 @@ def handle_login():
     elif flag == 2:
         return {
             "code": 0,
-            "token": generate_jwt({"user_id": user_id}),
+            "token": generate_jwt({"user_id": user_id}, datetime.utcnow() + timedelta(days=0, seconds=60 * 10)),
             "authority": "common"
         }
     else:
@@ -91,7 +91,7 @@ def handle_update_teacher():
     teacher_id = request.args.get("teacher_id")
     sql = "update teacher set"
     for key, value in dict(request.args).items():
-        if key == "teacher_id":
+        if key == "teacher_id" or key == "token" or key == "user_id":
             continue
         if key == 'password':
             sql += " password_md5='{}',".format(hashlib.md5(value.encode()).hexdigest())
@@ -103,4 +103,19 @@ def handle_update_teacher():
     db.commit()
     return {
         "code": 0
+    }
+
+
+@api.route("select_teacher", methods=["GET"])
+@token_required
+def handle_select_teacher():
+    sql = "select * from teacher"
+    cursor.execute(sql)
+    res = cursor.fetchall()
+    data = []
+    for i in res:
+        data.append(list(i))
+    return {
+        "code": 0,
+        "data": data
     }

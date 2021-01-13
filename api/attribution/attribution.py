@@ -32,6 +32,8 @@ def record_attribution():
 def attribution_query():
     sql = "select * from attribution_subscribe where 1=1"
     for key, value in dict(request.args).items():
+        if key == "teacher_id" or key == "token" or key == "user_id":
+            continue
         sql += " and {} like '%{}%'".format(key, value)
     cursor.execute(sql)
     db.commit()

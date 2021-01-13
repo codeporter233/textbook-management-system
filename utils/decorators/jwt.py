@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import request
@@ -23,7 +24,7 @@ def token_required(func):
                 if user_id != payload['user_id']:
                     custom_abort(-2, '未知用户')
                 res = func(*args, **kwargs)
-                res['token'] = jwt_utils.generate_jwt(payload)
+                res['token'] = jwt_utils.generate_jwt(payload, datetime.utcnow() + timedelta(days=0, seconds=60 * 10))
                 return res
             except ExpiredSignatureError:
                 custom_abort(-1, "token失效")
