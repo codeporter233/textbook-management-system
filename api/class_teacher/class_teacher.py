@@ -4,37 +4,28 @@ from mysql_connect import cursor, db
 from . import api
 
 
-@api.route("/select_teacher_class", methods=["GET"])
-# 教师班级表
-def select_all():
-    sql = "select * from teacher_class"
-    cursor.execute(sql)
-    result = cursor.fetchall()
-    print(result)
-    return {
-        "code": 0,
-        "result": result
-    }
-
-
 # 教师班级表查询
-@api.route("/select_teacher_class_id", methods=["GET"])
+@api.route("/select_teacher_class", methods=["GET"])
 def select_class_id():
-    sql = "select * from teacher WHERE 1=1"
-    select_teacner_number = request.args.get("teacher_id")
+    sql = "select * from teacher_class WHERE 1=1 "
+    select_teacner_id = request.args.get("teacher_id")
     select_class_id = request.args.get("class_id")
     select_course_id = request.args.get("course_id")
-    if select_teacner_number is not None:
-        sql += "and teacher_id like '" + select_teacner_number + "'"
-    if select_class_id is not None:
-        sql += "and class_id like '" + select_class_id + "'"
-    if select_course_id is not None:
-        sql += "and course_id like '" + select_course_id + "'"
+    if select_teacner_id != "":
+        sql += "and teacher_id like '%" + select_teacner_id + "%'"
+    if select_class_id != "":
+        sql += "and class_id like '%" + select_class_id + "%'"
+    if select_course_id != "":
+        sql += "and course_id like '%" + select_course_id + "%'"
+    print(sql)
     cursor.execute(sql)
     result = cursor.fetchall()
+    data = []
+    for i in result:
+        data.append(list(i))
     return {
         "code": 0,
-        "result": result
+        "data": data
 
     }
 
@@ -57,16 +48,16 @@ def teacher_class_insertData():
 # 教师班级表删除
 @api.route("/delete_teacher_class", methods=["GET"])
 def teacher_class_deleteData():
-    sql = "delete * from teacher_class WHERE 1=1"
+    sql = "delete from teacher_class WHERE 1=1 "
     teacher_id1 = request.args.get("teacher_id")
     class_id1 = request.args.get("class_id")
     course_id1 = request.args.get("course_id")
     if teacher_id1 is not None:
-        sql += "and teahcer_id like '" + teacher_id1 + "'"
+        sql += "and teacher_id like '" + teacher_id1 + "'"
     if class_id1 is not None:
         sql += "and class_id like '" + class_id1 + "'"
     if course_id1 is not None:
-        sql += "and class_id like '" + course_id1 + "'"
+        sql += "and course_id like '" + course_id1 + "'"
     cursor.execute(sql)
     db.commit()
     return {
