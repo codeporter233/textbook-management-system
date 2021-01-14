@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from flask import request
 
 from mysql_connect import cursor, db
+from utils.decorators.cache import cache
 from utils.decorators.jwt import token_required
 from utils.exceptions import custom_abort
 from utils.jwt_utils import generate_jwt
@@ -107,6 +108,7 @@ def handle_update_teacher():
 
 
 @api.route("select_teacher", methods=["GET"])
+@cache
 @token_required
 def handle_select_teacher():
     sql = "select * from teacher"

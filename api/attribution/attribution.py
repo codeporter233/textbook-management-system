@@ -1,6 +1,7 @@
 from flask import request
 
 from mysql_connect import cursor, db
+from utils.decorators.cache import cache
 from . import api
 import datetime
 
@@ -29,6 +30,7 @@ def record_attribution():
 
 
 @api.route("/attribution_query", methods=["GET"])
+@cache
 def attribution_query():
     sql = "select * from attribution_subscribe where 1=1"
     for key, value in dict(request.args).items():

@@ -1,11 +1,13 @@
 from flask import request
 
 from mysql_connect import cursor, db
+from utils.decorators.cache import cache
 from . import api
 
 
 # 教师班级表查询
 @api.route("/select_teacher_class", methods=["GET"])
+@cache
 def select_class_id():
     sql = "select * from teacher_class WHERE 1=1 "
     select_teacner_id = request.args.get("teacher_id")

@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from flask import request
 
 from mysql_connect import cursor, db
+from utils.decorators.cache import cache
 from . import api
 
 
@@ -24,6 +23,7 @@ def handle_insert_attribution_subscribe():
 
 
 @api.route("/select_attribution_subscribe", methods=["GET"])
+@cache
 def handle_select():
     sql = "select * from attribution_subscribe where 1=1 "
     book_id = request.args.get("book_id")
