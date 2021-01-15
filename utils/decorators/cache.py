@@ -8,7 +8,7 @@ import json
 def cache(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        key = ""
+        key = request.path
         for i in dict(request.args):
             if key == "token":
                 continue
@@ -20,6 +20,6 @@ def cache(func):
             return json.loads(cached)
         else:
             res = func(*args, **kwargs)
-            redis_cache.set(hash_key, json.dumps(res), ex=60)
+            redis_cache.set(hash_key, json.dumps(res), ex=3)
             return res
     return wrapper
