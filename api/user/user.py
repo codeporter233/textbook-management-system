@@ -78,6 +78,14 @@ def handle_add_teacher():
 @token_required
 def handle_delete_teacher():
     teacher_id = request.args.get("teacher_id")
+    sql_select = "select * from teacher where teacher_id='{}'".format(teacher_id)
+    cursor.execute(sql_select)
+    res = cursor.fetchall()
+    if len(res) == 0:
+        return {
+            "code": -4,
+            "message": "无此用户！"
+        }
     sql = "delete from teacher where teacher_id='{}'".format(teacher_id)
     cursor.execute(sql)
     db.commit()
@@ -90,6 +98,14 @@ def handle_delete_teacher():
 @token_required
 def handle_update_teacher():
     teacher_id = request.args.get("teacher_id")
+    sql_select = "select * from teacher where teacher_id='{}'".format(teacher_id)
+    cursor.execute(sql_select)
+    res = cursor.fetchall()
+    if len(res) == 0:
+        return {
+            "code": -4,
+            "message": "无此用户！"
+        }
     sql = "update teacher set"
     for key, value in dict(request.args).items():
         if key == "teacher_id" or key == "token" or key == "user_id":
