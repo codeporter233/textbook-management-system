@@ -51,24 +51,18 @@ def handle_login():
 @api.route("/add_teacher", methods=["GET"])
 @token_required
 def handle_add_teacher():
-    # 获取教师的五个参数
     teacher_id = request.args.get("teacher_id")
     name = request.args.get("name")
     sex = request.args.get("sex")
     telephone = request.args.get("telephone")
     password = request.args.get("password")
-    # pwd_md5为加密后的密码,数据库存放的是加密后的密码
     pwd_md5 = hashlib.md5(password.encode()).hexdigest()
     if sex != "男" and sex != "女":
-        # 如果性别不为男或女,则抛出异常,在index.py里有处理异常,这个你们不用管
         custom_abort(-3, "性别必须为男或女")
-    # 一句sql语句
     sql = "INSERT INTO `textbook_system`.`teacher`(`teacher_id`, `name`, `sex`, `telephone`, `password_md5`) VALUES ('{}', '{}', '{}', '{}', '{}')".format(
         teacher_id, name, sex, telephone, pwd_md5)
-    # 执行sql语句，cursor为从mysql_connect导入的
     cursor.execute(sql)
     db.commit()
-    # 返回结果，code为0表示运行正常
     return {
         "code": 0
     }
